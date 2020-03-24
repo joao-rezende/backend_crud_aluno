@@ -4,27 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8a3176c6a872f922606105cc8c64c51a",
+    "content-hash": "8d4083ac3040e63a93ef4aa04a87b6fd",
     "packages": [
         {
             "name": "chriskacerguis/codeigniter-restserver",
-            "version": "3.1.1",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chriskacerguis/codeigniter-restserver.git",
-                "reference": "6ced70d12c7e8d207eaded3f208a201330950b57"
+                "reference": "524718b31e31e0bd6c4b26a6770a0f9395f7f2c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chriskacerguis/codeigniter-restserver/zipball/6ced70d12c7e8d207eaded3f208a201330950b57",
-                "reference": "6ced70d12c7e8d207eaded3f208a201330950b57",
+                "url": "https://api.github.com/repos/chriskacerguis/codeigniter-restserver/zipball/524718b31e31e0bd6c4b26a6770a0f9395f7f2c1",
+                "reference": "524718b31e31e0bd6c4b26a6770a0f9395f7f2c1",
                 "shasum": ""
             },
-            "type": "library",
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "project",
             "autoload": {
-                "psr-4": {
-                    "chriskacerguis\\RestServer\\": "src/"
-                }
+                "classmap": [
+                    "application/libraries/Format.php",
+                    "application/libraries/REST_Controller.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -33,11 +37,12 @@
             "authors": [
                 {
                     "name": "Chris Kacerguis",
-                    "email": "chriskacerguis@gmail.com"
+                    "role": "Developer"
                 }
             ],
-            "description": "CI Rest Server",
-            "time": "2019-11-12T15:39:34+00:00"
+            "description": "REST Server for the CodeIgniter framework",
+            "homepage": "https://github.com/chriskacerguis/codeigniter-restserver",
+            "time": "2016-12-31T16:55:37+00:00"
         }
     ],
     "packages-dev": [

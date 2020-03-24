@@ -2,21 +2,20 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-require APPPATH . 'third_party\RestController.php';
-require APPPATH . 'third_party\Format.php';
+require APPPATH . 'third_party/REST_Controller.php';
+require APPPATH . 'third_party/Format.php';
 
-use chriskacerguis\RestServer\RestController;
+use Restserver\Libraries\REST_Controller;
 
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, DELETE ");
 
-class Api extends RestController {
+class Api extends REST_Controller {
 
     public function __construct()
     {
         parent::__construct();
 
-        // Carregamento dos Models
         $this->load->model("Aluno_model", "aluno");
     }
 
@@ -47,7 +46,7 @@ class Api extends RestController {
             $msg    = "Aluno não pôde ser incluído";
         }
 
-        return ["status" => $status, "msg" => $msg];
+        return ["status" => $status, "resposta" => $msg];
     }
 
     private function _editar_aluno($dados, $id_aluno)
@@ -69,18 +68,20 @@ class Api extends RestController {
     private function _upload_imagem($dados)
     {
         $config['upload_path']   = './uploads/';
-        $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size']      = '100';
+        $config['allowed_types'] = 'jpg|png';
+        $config['max_size']      = '2048';
         $config['max_width']     = '1024';
-        $config['max_height']    = '768';
+        $config['max_height']    = '1024';
         $config['overwrite']     = TRUE;
-        $config['file_name']     = mb_strtolower("aluno_" . $dados['nome'] . "_" . $dados['cidade']);
+        $config['file_name']     = mb_strtolower("aluno_" 
+            . preg_replace("/[^A-Za-z0-9\.\-]/", "", $dados['nome']) 
+            . "_" . preg_replace("/[^A-Za-z0-9\.\-]/", "", $dados['cidade']));
 
         $this->load->library('upload', $config);
 
         if (!$this->upload->do_upload('imagem'))
         {
-            $status = parent::HTTP_INTERNAL_ERROR;
+            $status = parent::HTTP_BAD_REQUEST;
             $this->response($this->upload->display_errors(NULL, NULL), $status);
             exit();
         }
@@ -101,13 +102,15 @@ class Api extends RestController {
             'bairro' => $this->input->post("bairro"),
             'cidade' => $this->input->post("cidade"),
             'estado' => $this->input->post("estado"),
-            'cep' => $this->input->post("cep")
+            'cep' => $this->input->post("cep"),
+            'horario_react' => $this->input->post("horario_react"),
+            'horario_api' => date("Y-m-d H:i:s")
         );
 
         if ($this->_validar_aluno($dados))
         {
             $id_aluno = $this->get("id");
-
+            
             if (!empty($_FILES['imagem']))
             {
                 $imagem          = $this->_upload_imagem($dados);
@@ -150,33 +153,38 @@ class Api extends RestController {
         $resposta = ['status' => $status, 'dados' => $dados];
         $this->response($resposta, $status);
     }
+    
+    public function exluir_aluno_get() {
+        $this->response($this->input->get("id"), parent::HTTP_OK);
+        exit();
+    }
 
-    public function aluno_delete()
+    public function aluno_teste_delete()
     {
-        $id_aluno = $this->get("id");
-        if (!empty($id_aluno))
-        {
-            if ($this->aluno->deletar_aluno($id_aluno))
-            {
-                $status = parent::HTTP_OK;
-                $msg    = "Aluno excluído com sucesso";
-            }
-            else
-            {
-                $status = parent::HTTP_INTERNAL_ERROR;
-                $msg    = "Aluno não pôde ser excluído";
-            }
-        }
-        else
-        {
-            $status = parent::HTTP_BAD_REQUEST;
-            $msg    = "O ID do aluno não pode ser nulo";
-        }
 
-        $resposta = ['status' => $status, 'msg' => $msg];
-        $this->response($resposta, $status);
+        $this->response("Chegou aqui", parent::HTTP_OK);
+        // exit();
+        // $id_aluno = $this->get("id");
+        // if (!empty($id_aluno))
+        // {
+        //     if ($this->aluno->deletar_aluno($id_aluno))
+        //     {
+        //         $status = parent::HTTP_OK;
+        //         $msg    = "Aluno excluído com sucesso";
+        //     }
+        //     else
+        //     {
+        //         $status = parent::HTTP_INTERNAL_ERROR;
+        //         $msg    = "Aluno não pôde ser excluído";
+        //     }
+        // }
+        // else
+        // {
+        //     $status = parent::HTTP_BAD_REQUEST;
+        //     $msg    = "O ID do aluno não pode ser nulo";
+        // }
+
+        // $this->response($msg, $status);
     }
 
 }
-
-/* Fim do Api.php */
