@@ -75,7 +75,7 @@ $active_group  = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-    'dsn' => 'pgsql:host=localhost;dbname=delta',
+    'dsn' => 'pgsql:host=http://177.47.172.132;dbname=delta',
     'username' => 'postgres',
     'password' => '123456',
     'dbdriver' => 'pdo',
