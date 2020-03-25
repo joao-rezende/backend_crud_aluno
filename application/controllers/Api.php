@@ -108,7 +108,7 @@ class Api extends REST_Controller {
         if ($this->_validar_aluno($dados))
         {
             $aluno = $this->aluno->buscar_alunos($id_aluno)->row();
-            if (!empty($_FILES['imagem']) && ($id_aluno === "" || $aluno !== NULL))
+            if (!empty($_FILES['imagem']) && (empty($id_aluno) || $aluno !== NULL))
             {
                 $imagem          = $this->_upload_imagem($dados);
                 $dados['imagem'] = base_url("/uploads/") . $imagem['upload_data']['file_name'];
@@ -155,7 +155,7 @@ class Api extends REST_Controller {
             $dados = $this->aluno->buscar_alunos($id_aluno)->row();
             if ($this->aluno->deletar_aluno($id_aluno))
             {
-                if ($dados !== NULL)
+                if ($dados->imagem !== NULL)
                 {
                     $nome_arquivo = str_replace(base_url("/uploads/"), "", $dados->imagem);
                     unlink(APPPATH . "../uploads/" . $nome_arquivo);
