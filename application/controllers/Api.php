@@ -107,7 +107,8 @@ class Api extends REST_Controller {
 
         if ($this->_validar_aluno($dados))
         {
-            if (!empty($_FILES['imagem']))
+            $aluno = $this->aluno->buscar_alunos($id_aluno)->row();
+            if (!empty($_FILES['imagem']) && ($id_aluno === "" || $aluno !== NULL))
             {
                 $imagem          = $this->_upload_imagem($dados);
                 $dados['imagem'] = base_url("/uploads/") . $imagem['upload_data']['file_name'];
@@ -139,20 +140,26 @@ class Api extends REST_Controller {
         }
         else
         {
-            $dados = $this->aluno->buscar_alunos()->result();
+            $buscar = $this->input->get("buscar");
+            $dados  = $this->aluno->buscar_alunos(NULL, $buscar)->result();
         }
 
-        $status   = parent::HTTP_OK;
-        $resposta = ['status' => $status, 'dados' => $dados];
-        $this->response($resposta, $status);
+        $status = parent::HTTP_OK;
+        $this->response($dados, $status);
     }
 
     public function aluno_delete($id_aluno = NULL)
     {
         if (!empty($id_aluno))
         {
+            $dados = $this->aluno->buscar_alunos($id_aluno)->row();
             if ($this->aluno->deletar_aluno($id_aluno))
             {
+                if ($dados !== NULL)
+                {
+                    $nome_arquivo = str_replace(base_url("/uploads/"), "", $dados->imagem);
+                    unlink(APPPATH . "../uploads/" . $nome_arquivo);
+                }
                 $status = parent::HTTP_OK;
                 $msg    = "Aluno excluído com sucesso";
             }

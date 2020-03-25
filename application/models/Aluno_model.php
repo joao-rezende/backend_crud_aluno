@@ -13,11 +13,15 @@ class Aluno_model extends CI_Model {
                         ->update("aluno", $aluno);
     }
 
-    public function buscar_alunos($id_aluno = NULL)
+    public function buscar_alunos($id_aluno = NULL, $buscar = NULL)
     {
         if (!empty($id_aluno))
         {
             $this->db->where("id_aluno", $id_aluno);
+        }
+        if (!empty($buscar))
+        {
+            $this->db->like("lower(nome)", mb_strtolower($buscar), "both");
         }
         return $this->db->order_by("nome")
                         ->get("aluno");
